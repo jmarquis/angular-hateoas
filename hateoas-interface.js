@@ -1,6 +1,31 @@
-angular.module("hateoasInterface", [])
+angular.module("hateoasInterface", ["ngResource"])
 
-	.provider("HateoasInterface", function () {
+	.provider("HateoasInterceptor", function () {
+		
+		var linksKey = "links";
+
+		return {
+			
+			setLinksKey: function (newLinksKey) {
+				linksKey = newLinksKey || linksKey;
+			},
+
+			$get: function (HateoasInterface, $q) {
+				return {
+					response: function (response) {
+						if (response && typeof response[linksKey] === "object") {
+							response = new HateoasInterface(response);
+						}
+						return response || $q.when(response);
+					}
+				};
+			}
+
+		};
+
+	})
+
+	.provider("HateoasInterface", function ($httpProvider, HateoasInterceptorProvider) {
 
 		// global Hateoas settings
 		var globalHttpMethods;
@@ -11,11 +36,16 @@ angular.module("hateoasInterface", [])
 				globalHttpMethods = angular.copy(httpMethods);
 			},
 
+			transformAllResponses: function (linksKey) {
+				HateoasInterceptorProvider.setLinksKey(linksKey);
+				$httpProvider.interceptors.push("HateoasInterceptor");
+			},
+
 			$get: function ($resource) {
 
 				var arrayToObject = function (keyItem, valueItem, array) {
 					var obj = {};
-					$.each(array, function (index, item) {
+					angular.forEach(array, function (item, index) {
 						if (item[keyItem] && item[valueItem]) {
 							obj[item[keyItem]] = item[valueItem];
 						}
