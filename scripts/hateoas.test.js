@@ -26,7 +26,7 @@ describe("Hateoas Interface module", function () {
 
 	beforeEach(function () {
 		module("ngResource");
-		module("hateoasInterface");
+		module("hateoas");
 	});
 
 	describe("HateoasInterface object", function () {
@@ -74,15 +74,15 @@ describe("Hateoas Interface module", function () {
 	describe("transformAllResponses method", function () {
 
 		var $httpProvider,
-			HateoasInterfaceProvider,
+			HateoasInterceptorProvider,
 			HateoasInterface,
 			HateoasInterceptor;
 
 		beforeEach(function () {
 
 			// get providers
-			module("ng", function (_HateoasInterfaceProvider_, _$httpProvider_) {
-				HateoasInterfaceProvider = _HateoasInterfaceProvider_;
+			module("ng", function (_HateoasInterceptorProvider_, _$httpProvider_) {
+				HateoasInterceptorProvider = _HateoasInterceptorProvider_;
 				$httpProvider = _$httpProvider_;
 				$httpProvider.interceptors = [];
 			});
@@ -97,7 +97,7 @@ describe("Hateoas Interface module", function () {
 
 		it("should add a global HTTP interceptor", function () {
 			var interceptorCount = $httpProvider.interceptors.length;
-			HateoasInterfaceProvider.transformAllResponses();
+			HateoasInterceptorProvider.transformAllResponses();
 			expect($httpProvider.interceptors.length).toBe(interceptorCount + 1);
 		});
 
