@@ -114,7 +114,7 @@ angular.module("hateoas", ["ngResource"])
 					if (linkName in this[linksKey]) {
 						return $resource(this[linksKey][linkName], bindings, httpMethods || globalHttpMethods);
 					} else {
-						throw "Link is not present in object.";
+						throw "Link '" + linkName + "' is not present in object.";
 					}
 				};
 
