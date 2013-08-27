@@ -140,10 +140,23 @@ angular.module("hateoas", ["ngResource"])
 
 				return {
 					response: function (response) {
-						if (response && typeof response[linksKey] === "object") {
-							response = new HateoasInterface(response);
+
+						if (response && angular.isObject(response.data)) {
+
+							if (angular.isArray(response.data)) {
+								for (var i = 0; i < response.data.length; i++) {
+									if (angular.isArray(response.data[i][linksKey])) {
+										response.data[i] = new HateoasInterface(response.data[i]);
+									}
+								}
+							} else if (angular.isArray(response.data[linksKey])) {
+								response.data = new HateoasInterface(response.data);
+							}
+						
 						}
+
 						return response || $q.when(response);
+
 					}
 				};
 			}

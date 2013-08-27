@@ -1,6 +1,6 @@
 describe("Hateoas Interface module", function () {
 
-	var getMockHateoasResponse = function () {
+	var getMockAngularResponseData = function () {
 		return angular.copy({
 			stringKey: "value",
 			intKey: 1,
@@ -39,8 +39,8 @@ describe("Hateoas Interface module", function () {
 
 		it("should retain all original object properties other than links", function () {
 			
-			var response = new HateoasInterface(getMockHateoasResponse());
-			var rawResponse = getMockHateoasResponse();
+			var response = new HateoasInterface(getMockAngularResponseData());
+			var rawResponse = getMockAngularResponseData();
 
 			expect(typeof response).toBe("object");
 
@@ -52,7 +52,7 @@ describe("Hateoas Interface module", function () {
 
 		it("should provide a resource for each link rel", function () {
 
-			var response = new HateoasInterface(getMockHateoasResponse());
+			var response = new HateoasInterface(getMockAngularResponseData());
 
 			expect(typeof response.resource).toBe("function");
 
@@ -104,8 +104,8 @@ describe("Hateoas Interface module", function () {
 		describe("response interceptor", function () {
 
 			it("should transform a HATEOAS response into a HateoasInterface", function () {
-				var transformedResponse = HateoasInterceptor.response(getMockHateoasResponse());
-				expect(transformedResponse).toEqual(new HateoasInterface(getMockHateoasResponse()));
+				var transformedResponse = HateoasInterceptor.response({ data: getMockAngularResponseData() }).data;
+				expect(transformedResponse).toEqual(new HateoasInterface(getMockAngularResponseData()));
 			});
 
 			it("should not change a non-HATEOAS response", function () {
