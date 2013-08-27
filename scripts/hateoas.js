@@ -92,7 +92,7 @@ angular.module("hateoas", ["ngResource"])
 				globalHttpMethods = angular.copy(httpMethods);
 			},
 
-			$get: function ($resource) {
+			$get: function ($injector) {
 
 				var arrayToObject = function (keyItem, valueItem, array) {
 					var obj = {};
@@ -112,7 +112,7 @@ angular.module("hateoas", ["ngResource"])
 
 				HateoasInterface.prototype.resource = function (linkName, bindings, httpMethods) {
 					if (linkName in this[linksKey]) {
-						return $resource(this[linksKey][linkName], bindings, httpMethods || globalHttpMethods);
+						return $injector.get("$resource")(this[linksKey][linkName], bindings, httpMethods || globalHttpMethods);
 					} else {
 						throw "Link '" + linkName + "' is not present in object.";
 					}
@@ -140,7 +140,7 @@ angular.module("hateoas", ["ngResource"])
 
 				return {
 					response: function (response) {
-						if (response && typeof response[HateoasInterfaceProvider.getLinksKey()] === "object") {
+						if (response && typeof response[linksKey] === "object") {
 							response = new HateoasInterface(response);
 						}
 						return response || $q.when(response);
@@ -151,3 +151,4 @@ angular.module("hateoas", ["ngResource"])
 		};
 
 	});
+
