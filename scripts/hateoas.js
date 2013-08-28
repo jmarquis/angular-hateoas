@@ -55,7 +55,7 @@
  * 
  * ```javascript
  * app.config(function (HateoasInterceptorProvider) {
- *     HateoasInterceptorProvider.interceptAllResponses();
+ *     HateoasInterceptorProvider.transformAllResponses();
  * });
  * ```
  *
