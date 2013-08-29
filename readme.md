@@ -17,39 +17,45 @@ Angular does not have a built-in way to cleanly navigate a HATEOAS-style API —
 
 For instance, a traditional approach might look like this:
 
-	var personResource = $resource("/api/people/:personId");
-	var addressResource = $resource("/api/people/:personId/addresses");
+```javascript
+var personResource = $resource("/api/people/:personId");
+var addressResource = $resource("/api/people/:personId/addresses");
 
-	var people = personResource.query(null, function () {
-		var firstPerson = people[0];
-		var firstPersonAddresses = addressResource.query({ personId: person[i].personId }, function () {
-			console.log(firstPersonAddresses);
-		});
+var people = personResource.query(null, function () {
+	var firstPerson = people[0];
+	var firstPersonAddresses = addressResource.query({ personId: person[i].personId }, function () {
+		console.log(firstPersonAddresses);
 	});
+});
+```
 
 This is a very simplified example, but notice the arbitrary information that the front-end developer needs to know about how to get an address for a person: you need to know where the `addresses` endpoint is, and you need to know what to pass in to the call to get it (`personId`).
 
 Compare this to the HATEOAS approach, where the server delivers links to related endpoints:
 
-	var personResource = $resource("/api/people/:personId");
+```javascript
+var personResource = $resource("/api/people/:personId");
 
-	var people = personResource.query(null, function () {
-		var firstPerson = people[0];
-		var firstPersonAddresses = firstPerson.resource("addresses").query(null, function () {
-			console.log(firstPersonAddresses);
-		});
+var people = personResource.query(null, function () {
+	var firstPerson = people[0];
+	var firstPersonAddresses = firstPerson.resource("addresses").query(null, function () {
+		console.log(firstPersonAddresses);
 	});
+});
+```
 
 The `angular-hateoas` module creates an application-wide interceptor to automatically add the `resource` method to all HATEOAS responses. Alternatively, you could transform a response manually:
 
-	var personResource = $resource("/api/people/:personId");
+```javascript
+var personResource = $resource("/api/people/:personId");
 
-	var people = personResource.query(null, function () {
-		var firstPerson = people[0];
-		var firstPersonAddresses = new HateoasInterface(firstPerson).resource("addresses").query(null, function () {
-			console.log(firstPersonAddresses);
-		});
+var people = personResource.query(null, function () {
+	var firstPerson = people[0];
+	var firstPersonAddresses = new HateoasInterface(firstPerson).resource("addresses").query(null, function () {
+		console.log(firstPersonAddresses);
 	});
+});
+```
 
 
 Usage
@@ -57,26 +63,32 @@ Usage
 
 To start, make sure you are including `hateoas.js` in your JavaScript compiler (or on your page), and add `hateoas` as a dependency in your application module declaration:
 
-	var app = angular.module("your-application", ["ngResource", "hateoas"]);
+```javascript
+var app = angular.module("your-application", ["ngResource", "hateoas"]);
+```
 
 To enable the global interceptor, invoke `HateoasInterceptorProvider.transformAllResponses()` in a `config` block:
 
-	app.config(function (HateoasInterfaceProvider) {
-		HateoasInterceptorProvider.transformAllResponses();
-	});
+```javascript
+app.config(function (HateoasInterfaceProvider) {
+	HateoasInterceptorProvider.transformAllResponses();
+});
+```
 
 And that's it! All HATEOAS-enabled responses will allow you to retrieve related resources as you need them:
 
-	var item = $resource("/api/path/to/item").get(null, function () {
+```javascript
+var item = $resource("/api/path/to/item").get(null, function () {
+	console.log("Here's a related $resource object: ", item.resource("some-related-endpoint"));
+});
+
+// also works with array results from $resource(...).query()
+var items = $resource("/api/path/to/items").query(null, function () {
+	angular.forEach(items, function (item) {
 		console.log("Here's a related $resource object: ", item.resource("some-related-endpoint"));
 	});
-
-	// also works with array results from $resource(...).query()
-	var items = $resource("/api/path/to/items").query(null, function () {
-		angular.forEach(items, function (item) {
-			console.log("Here's a related $resource object: ", item.resource("some-related-endpoint"));
-		});
-	});
+});
+```
 
 You can also instantiate `HateoasInterface` directly if you prefer not to use an application-wide interceptor. Simply inject `HateoasInterface` where you need it and instantiate a new instance, passing in the raw response data as seen in the previous section.
 
@@ -88,34 +100,40 @@ The `HateoasInterfaceProvider` allows for some basic configuration.
 
 By default, `HateoasInterface` parses the HATEOAS links from an object with the key "links" within the response data. This key can be changed using `setLinksKey`:
 
-	app.config(function (HateoasInterfaceProvider) {
-		HateoasInterfaceProvider.setLinksKey("related");
-		// HateoasInterface will now search response data for links in a property called "related"
-	});
+```javascript
+app.config(function (HateoasInterfaceProvider) {
+	HateoasInterfaceProvider.setLinksKey("related");
+	// HateoasInterface will now search response data for links in a property called "related"
+});
+```
 
 #### Setting `$resource` options
 
 Angular's `$resource` object accepts two optional parameters, as seen in [the documentation](http://docs.angularjs.org/api/ngResource.$resource): `paramDefaults` and `actions`. These parameters can be passed directly in to the `$resource` constructor from the `HateoasInterface.resource` method:
 
-	var relatedResource = someHateoasItem.resource("some-related-endpoint", {
-		binding: "value"
-	}, {
-		update: {
-			method: "PUT"
-		}
-	});
+```javascript
+var relatedResource = someHateoasItem.resource("some-related-endpoint", {
+	binding: "value"
+}, {
+	update: {
+		method: "PUT"
+	}
+});
+```
 
 For more information about these parameters, refer to Angular's `$resource` documentation.
 
 The custom HTTP actions can also be set to an application-wide default, which can be useful if you're using the same actions/methods throughout your app:
 
-	app.config(function (HateoasInterfaceProvider) {
-		HateoasInterfaceProvider.setHttpMethods({
-			update: {
-				method: "PUT"
-			}
-		});
+```javascript
+app.config(function (HateoasInterfaceProvider) {
+	HateoasInterfaceProvider.setHttpMethods({
+		update: {
+			method: "PUT"
+		}
 	});
+});
+```
 
 
 About
