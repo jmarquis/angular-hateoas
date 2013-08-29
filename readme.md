@@ -139,6 +139,6 @@ app.config(function (HateoasInterfaceProvider) {
 About
 -----
 
-The `angular-hateoas` module was created for a personal need, and while it is working for my own projects, it is still in a very early stage of development and probably won't fit every HATEOAS user's needs. Feel free to use and enjoy – while I can't guarantee support, I welcome any comments, forks, pull requests, etc.
+The `angular-hateoas` module was created for a personal need, and while it is working for my own projects, it is still in a very early stage of development and probably won't fit every HATEOAS developer's needs. Feel free to use and enjoy – while I can't guarantee support, I welcome any comments, forks, pull requests, bug reports, etc.
 
 `angular-hateoas` was built to work with [Spring Hateoas](https://github.com/SpringSource/spring-hateoas), and has yet to be tested in other environments.
