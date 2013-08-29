@@ -61,7 +61,7 @@ var people = personResource.query(null, function () {
 Usage
 -----
 
-To start, make sure you are including `hateoas.js` in your JavaScript compiler (or on your page), and add `hateoas` as a dependency in your application module declaration:
+To start, make sure you are including `angular-hateoas.js` in your JavaScript compiler (or the minified version on your page), and add `hateoas` as a dependency in your application module declaration:
 
 ```javascript
 var app = angular.module("your-application", ["ngResource", "hateoas"]);

@@ -4,7 +4,7 @@ module.exports = function (grunt) {
 		pkg: grunt.file.readJSON("package.json"),
 		uglify: {
 			options: {
-				banner: "/*! <%= pkg.name %> <%= pkg.version %>-<%= grunt.template.today('yyyymmdd') %> (http://github.com/jmarquis/angular-hateoas) */\n"
+				banner: "/*!\n * <%= pkg.name %> <%= pkg.version %>-<%= grunt.template.today('yyyymmdd') %>\n * Copyright 2013 Jeremy Marquis (@_jmarquis)\n * http://github.com/jmarquis/angular-hateoas\n */\n"
 			},
 			build: {
 				src: "src/<%= pkg.name %>.js",
