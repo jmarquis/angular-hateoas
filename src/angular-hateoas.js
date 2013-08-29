@@ -92,7 +92,7 @@ angular.module("hateoas", ["ngResource"])
 				globalHttpMethods = angular.copy(httpMethods);
 			},
 
-			$get: function ($injector) {
+			$get: ["$injector", function ($injector) {
 
 				var arrayToObject = function (keyItem, valueItem, array) {
 					var obj = {};
@@ -120,13 +120,13 @@ angular.module("hateoas", ["ngResource"])
 
 				return HateoasInterface;
 
-			}
+			}]
 
 		};
 
 	})
 
-	.provider("HateoasInterceptor", function ($httpProvider, HateoasInterfaceProvider) {
+	.provider("HateoasInterceptor", ["$httpProvider", "HateoasInterfaceProvider", function ($httpProvider, HateoasInterfaceProvider) {
 		
 		var linksKey = HateoasInterfaceProvider.getLinksKey();
 
@@ -136,7 +136,7 @@ angular.module("hateoas", ["ngResource"])
 				$httpProvider.interceptors.push("HateoasInterceptor");
 			},
 
-			$get: function (HateoasInterface, $q) {
+			$get: ["HateoasInterface", "$q", function (HateoasInterface, $q) {
 
 				return {
 					response: function (response) {
@@ -159,9 +159,9 @@ angular.module("hateoas", ["ngResource"])
 
 					}
 				};
-			}
+			}]
 
 		};
 
-	});
+	}]);
 
