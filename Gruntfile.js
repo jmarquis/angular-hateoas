@@ -28,6 +28,7 @@ module.exports = function (grunt) {
 	grunt.registerTask("default", ["karma:continuous", "uglify"]);
 
 	grunt.registerTask("startTestServer", ["karma:unit:start"]);
-	grunt.registerTask("test", ["karma:unit:run"]);
+	grunt.registerTask("runTests", ["karma:unit:run"]);
+	grunt.registerTask("test", ["karma:continuous"]);
 
 };

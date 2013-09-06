@@ -105,9 +105,22 @@ angular.module("hateoas", ["ngResource"])
 					return obj;
 				};
 
-				var HateoasInterface = function (dataObject) {
-					angular.extend(this, dataObject, { links: arrayToObject("rel", "href", dataObject[linksKey]) });
-					return this;
+				var HateoasInterface = function (data) {
+
+					// if links are present, consume object and convert links
+					if (data[linksKey]) {
+						data = angular.extend(this, data, { links: arrayToObject("rel", "href", data[linksKey]) });
+					}
+
+					// recursively consume all contained arrays or objects with links
+					angular.forEach(data, function (value, key) {
+						if (key !== linksKey && angular.isObject(value) && (angular.isArray(value) || value[linksKey])) {
+							data[key] = new HateoasInterface(value);
+						}
+					});
+
+					return data;
+
 				};
 
 				HateoasInterface.prototype.resource = function (linkName, bindings, httpMethods) {
@@ -142,17 +155,7 @@ angular.module("hateoas", ["ngResource"])
 					response: function (response) {
 
 						if (response && angular.isObject(response.data)) {
-
-							if (angular.isArray(response.data)) {
-								for (var i = 0; i < response.data.length; i++) {
-									if (angular.isArray(response.data[i][linksKey])) {
-										response.data[i] = new HateoasInterface(response.data[i]);
-									}
-								}
-							} else if (angular.isArray(response.data[linksKey])) {
-								response.data = new HateoasInterface(response.data);
-							}
-						
+							response.data = new HateoasInterface(response.data);
 						}
 
 						return response || $q.when(response);
@@ -164,4 +167,3 @@ angular.module("hateoas", ["ngResource"])
 		};
 
 	}]);
-
