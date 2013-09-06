@@ -69,6 +69,29 @@ describe("Hateoas Interface module", function () {
 
 		});
 
+		it("should recursively process an array response", function () {
+			
+			var response = new HateoasInterface([getMockAngularResponseData(), getMockAngularResponseData()]);
+
+			expect(response.length).toBe(2);
+
+			expect(response[0] instanceof HateoasInterface).toBe(true);
+			expect(response[1] instanceof HateoasInterface).toBe(true);
+
+		});
+
+		it("should recursively process nested objects", function () {
+
+			var response = new HateoasInterface({
+				nestedObj1: getMockAngularResponseData(),
+				nestedObj2: getMockAngularResponseData()
+			});
+
+			expect(response.nestedObj1 instanceof HateoasInterface).toBe(true);
+			expect(response.nestedObj2 instanceof HateoasInterface).toBe(true);
+
+		});
+
 	});
 
 	describe("transformAllResponses method", function () {
