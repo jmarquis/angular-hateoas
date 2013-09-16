@@ -1,0 +1,5 @@
+{
+	"name": "angular-hateoas",
+	"version": "0.2.1",
+	"main": "src/angular-hateoas.js"
+}
