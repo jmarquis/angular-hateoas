@@ -1,0 +1,23 @@
+{
+  "name": "angular-hateoas",
+  "version": "0.2.0",
+  "authors": [
+    "Jeremy Marquis <jeremy@jeremymarquis.com>"
+  ],
+  "description": "An AngularJS module for using $resource with a HATEOAS-enabled REST API.",
+  "keywords": [
+    "angular",
+    "resource",
+    "hateoas",
+    "rest",
+    "api"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/jmarquis/angular-hateoas",
+  "main": "src/angular-hateoas.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ]
+}
