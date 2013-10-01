@@ -70,7 +70,7 @@ var app = angular.module("your-application", ["ngResource", "hateoas"]);
 To enable the global interceptor, invoke `HateoasInterceptorProvider.transformAllResponses()` in a `config` block:
 
 ```javascript
-app.config(function (HateoasInterfaceProvider) {
+app.config(function (HateoasInterceptorProvider) {
 	HateoasInterceptorProvider.transformAllResponses();
 });
 ```
