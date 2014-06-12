@@ -105,11 +105,19 @@ angular.module("hateoas", ["ngResource"])
 					return obj;
 				};
 
+				var resource = function (linkName, bindings, httpMethods) {
+					if (linkName in this[linksKey]) {
+						return $injector.get("$resource")(this[linksKey][linkName], bindings, httpMethods || globalHttpMethods);
+					} else {
+						throw "Link '" + linkName + "' is not present in object.";
+					}
+				};
+
 				var HateoasInterface = function (data) {
 
 					// if links are present, consume object and convert links
 					if (data[linksKey]) {
-						data = angular.extend(this, data, { links: arrayToObject("rel", "href", data[linksKey]) });
+						data = angular.extend(this, data, { links: arrayToObject("rel", "href", data[linksKey]), resource: resource });
 					}
 
 					// recursively consume all contained arrays or objects with links
@@ -121,14 +129,6 @@ angular.module("hateoas", ["ngResource"])
 
 					return data;
 
-				};
-
-				HateoasInterface.prototype.resource = function (linkName, bindings, httpMethods) {
-					if (linkName in this[linksKey]) {
-						return $injector.get("$resource")(this[linksKey][linkName], bindings, httpMethods || globalHttpMethods);
-					} else {
-						throw "Link '" + linkName + "' is not present in object.";
-					}
 				};
 
 				return HateoasInterface;
