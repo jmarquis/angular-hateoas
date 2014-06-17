@@ -76,7 +76,8 @@ angular.module("hateoas", ["ngResource"])
 
 		// global Hateoas settings
 		var globalHttpMethods,
-			linksKey = "links";
+			linksKey = "links",
+			halEmbedded = false;
 
 		return {
 
@@ -88,6 +89,14 @@ angular.module("hateoas", ["ngResource"])
 				return linksKey;
 			},
 
+			setHalEmbedded: function (newEmbeddedKey) {
+				halEmbedded = newEmbeddedKey;
+			},
+
+			getHalEmbedded: function () {
+				return halEmbedded;
+			},
+
 			setHttpMethods: function (httpMethods) {
 				globalHttpMethods = angular.copy(httpMethods);
 			},
@@ -97,8 +106,8 @@ angular.module("hateoas", ["ngResource"])
 				var arrayToObject = function (keyItem, valueItem, array) {
 					var obj = {};
 					angular.forEach(array, function (item, index) {
-						if (item[keyItem] && item[valueItem]) {
-							obj[item[keyItem]] = item[valueItem];
+						if ((item[keyItem] || index) && item[valueItem]) {
+							obj[item[keyItem] || index] = item[valueItem];
 						}
 					});
 
@@ -120,6 +129,10 @@ angular.module("hateoas", ["ngResource"])
 						var links = {};
 						links[linksKey] = arrayToObject("rel", "href", data[linksKey]);
 						data = angular.extend(this, data, links, { resource: resource });
+					}
+
+					if (halEmbedded && data[halEmbedded]) {
+						data = angular.extend(this, data, new HateoasInterface(data[halEmbedded]));
 					}
 
 					// recursively consume all contained arrays or objects with links
