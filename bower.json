@@ -19,5 +19,10 @@
     "**/.*",
     "node_modules",
     "bower_components"
-  ]
+  ],
+  "devDependencies": {
+    "angular": "~1.2.24",
+    "angular-mocks": "~1.2.24",
+    "angular-resource": "~1.2.24"
+  }
 }

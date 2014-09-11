@@ -52,7 +52,7 @@
  * The `HateoasInterceptor` service is a way of making your application globally HATEOAS-enabled. It adds a global HTTP response interceptor that transforms HATEOAS responses into HateoasInterface instances.
  *
  * First, initialize the interceptor:
- * 
+ *
  * ```javascript
  * app.config(function (HateoasInterceptorProvider) {
  *     HateoasInterceptorProvider.transformAllResponses();
@@ -60,7 +60,7 @@
  * ```
  *
  * Then any HATEOAS response will automatically have the `resource` method:
- * 
+ *
  * ```javascript
  * var someResource = $resource("/some/rest/endpoint");
  * var someResult = someResource.get(null, function () {
@@ -117,7 +117,9 @@ angular.module("hateoas", ["ngResource"])
 
 					// if links are present, consume object and convert links
 					if (data[linksKey]) {
-						data = angular.extend(this, data, { links: arrayToObject("rel", "href", data[linksKey]), resource: resource });
+						var links = {};
+						links[linksKey] = arrayToObject("rel", "href", data[linksKey]);
+						data = angular.extend(this, data, links, { resource: resource });
 					}
 
 					// recursively consume all contained arrays or objects with links
@@ -139,12 +141,10 @@ angular.module("hateoas", ["ngResource"])
 
 	})
 
-	.provider("HateoasInterceptor", ["$httpProvider", "HateoasInterfaceProvider", function ($httpProvider, HateoasInterfaceProvider) {
-		
-		var linksKey = HateoasInterfaceProvider.getLinksKey();
+	.provider("HateoasInterceptor", ["$httpProvider", function ($httpProvider) {
 
 		return {
-			
+
 			transformAllResponses: function () {
 				$httpProvider.interceptors.push("HateoasInterceptor");
 			},
