@@ -1,7 +1,8 @@
 describe("Hateoas Interface module", function () {
 
-	var getMockAngularResponseData = function () {
-		return angular.copy({
+	var getMockAngularResponseData = function (linksKey) {
+
+		var responseData = angular.copy({
 			stringKey: "value",
 			intKey: 1,
 			objKey: {
@@ -10,18 +11,22 @@ describe("Hateoas Interface module", function () {
 			arrayKey: [
 				"value1",
 				"value2"
-			],
-			links: [
-				{
-					rel: "self",
-					href: "http://root/self"
-				},
-				{
-					rel: "other",
-					href: "http://root/other"
-				}
 			]
 		});
+
+		responseData[linksKey || "links"] = [
+			{
+				rel: "self",
+				href: "http://root/self"
+			},
+			{
+				rel: "other",
+				href: "http://root/other"
+			}
+		];
+
+		return responseData;
+
 	};
 
 	beforeEach(function () {
@@ -31,14 +36,25 @@ describe("Hateoas Interface module", function () {
 
 	describe("HateoasInterface object", function () {
 
-		var HateoasInterface;
+		var HateoasInterface,
+			HateoasInterfaceProvider;
 
-		beforeEach(inject(function (_HateoasInterface_) {
-			HateoasInterface = _HateoasInterface_;
-		}));
+		beforeEach(function () {
+
+			// get providers
+			module("ng", function (_HateoasInterfaceProvider_) {
+				HateoasInterfaceProvider = _HateoasInterfaceProvider_;
+			});
+
+			// get injectables
+			inject(function (_HateoasInterface_) {
+				HateoasInterface = _HateoasInterface_;
+			});
+
+		});
 
 		it("should retain all original object properties other than links", function () {
-			
+
 			var response = new HateoasInterface(getMockAngularResponseData());
 			var rawResponse = getMockAngularResponseData();
 
@@ -70,7 +86,7 @@ describe("Hateoas Interface module", function () {
 		});
 
 		it("should recursively process an array response", function () {
-			
+
 			var response = new HateoasInterface([getMockAngularResponseData(), getMockAngularResponseData()]);
 
 			expect(response.length).toBe(2);
@@ -89,6 +105,30 @@ describe("Hateoas Interface module", function () {
 
 			expect(response.nestedObj1 instanceof HateoasInterface).toBe(true);
 			expect(response.nestedObj2 instanceof HateoasInterface).toBe(true);
+
+		});
+
+		it("should allow customization of links key", function () {
+
+			var linksKey;
+
+			for (var i = 0; i < 10; i++) {
+
+				linksKey = Math.random().toString(36).slice(-10);
+
+				HateoasInterfaceProvider.setLinksKey(linksKey);
+
+				var response = new HateoasInterface(getMockAngularResponseData(linksKey));
+				expect(response instanceof HateoasInterface).toBe(true);
+				expect(response[linksKey] instanceof Object).toBe(true);
+
+				expect(response.resource("self")).toBeTruthy();
+				expect(typeof response.resource("self").get).toBe("function");
+
+				expect(response.resource("other")).toBeTruthy();
+				expect(typeof response.resource("other").get).toBe("function");
+
+			}
 
 		});
 

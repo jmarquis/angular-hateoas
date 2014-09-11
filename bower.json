@@ -1,6 +1,6 @@
 {
   "name": "angular-hateoas",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "authors": [
     "Jeremy Marquis <jeremy@jeremymarquis.com>"
   ],
@@ -19,5 +19,10 @@
     "**/.*",
     "node_modules",
     "bower_components"
-  ]
+  ],
+  "devDependencies": {
+    "angular": "~1.2.24",
+    "angular-mocks": "~1.2.24",
+    "angular-resource": "~1.2.24"
+  }
 }
