@@ -1,0 +1,6 @@
+/test/
+Gruntfile.js
+karma.conf.js
+bower.json
+*.sublime-project
+*.sublime-workspace

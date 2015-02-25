@@ -1,6 +1,6 @@
 {
   "name": "angular-hateoas",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "authors": [
     "Jeremy Marquis <jeremy@jeremymarquis.com>"
   ],
@@ -18,7 +18,9 @@
   "ignore": [
     "**/.*",
     "node_modules",
-    "bower_components"
+    "bower_components",
+    "*.sublime-project",
+    "*.sublime-workspace"
   ],
   "devDependencies": {
     "angular": "~1.2.24",
