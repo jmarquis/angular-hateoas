@@ -1,10 +1,12 @@
 {
   "name": "angular-hateoas",
+  "description": "An AngularJS module for using $resource with a HATEOAS-enabled REST API.",
   "version": "0.2.4",
   "repository": {
     "type": "git",
     "url": "https://github.com/jmarquis/angular-hateoas.git"
   },
+  "main": "src/angular-hateoas.js",
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib-uglify": "^0.7.0",
