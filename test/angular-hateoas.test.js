@@ -1,6 +1,6 @@
 describe("Hateoas Interface module", function () {
 
-	var getMockAngularResponseData = function (linksKey) {
+	var getMockAngularResponseData = function (linksKey, embeddedKey) {
 
 		var responseData = angular.copy({
 			stringKey: "value",
@@ -15,6 +15,29 @@ describe("Hateoas Interface module", function () {
 		});
 
 		responseData[linksKey || "links"] = [
+			{
+				rel: "self",
+				href: "http://root/self"
+			},
+			{
+				rel: "other",
+				href: "http://root/other"
+			}
+		];
+
+		responseData[embeddedKey || "embedded"] = {
+			stringKey: "value",
+			intKey: 1,
+			objKey: {
+				value: "value"
+			},
+			arrayKey: [
+				"value1",
+				"value2"
+			]
+		};
+
+		responseData[embeddedKey || "embedded"][linksKey || "links"] = [
 			{
 				rel: "self",
 				href: "http://root/self"
@@ -61,7 +84,23 @@ describe("Hateoas Interface module", function () {
 			expect(typeof response).toBe("object");
 
 			for (var key in rawResponse) {
-				if (key !== "links") expect(response[key]).toEqual(rawResponse[key]);
+				if (key !== "links" && key !== "embedded") expect(response[key]).toEqual(rawResponse[key]);
+				if (key == "embedded") expect(response[key]["links"]).toEqual(response["links"]);
+			}
+
+		});
+
+
+		it("should retain all original embedded object properties other than links", function () {
+
+			var response = new HateoasInterface(getMockAngularResponseData());
+			var rawResponse = getMockAngularResponseData();
+
+			expect(typeof response["embedded"]).toBe("object");
+
+			for (var key in rawResponse) {
+				if (key !== "links" && key !== "embedded")
+					expect(response["embedded"][key]).toEqual(rawResponse["embedded"][key]);
 			}
 
 		});
@@ -81,6 +120,32 @@ describe("Hateoas Interface module", function () {
 			expect(response.resource).toThrow();
 			expect(function () {
 				response.resource("invalid link");
+			}).toThrow();
+
+		});
+
+
+		it("should provide an interface for each embedded", function () {
+
+			var embeddedKey = "embedded";
+
+			HateoasInterfaceProvider.setHalEmbedded(embeddedKey);
+
+			var response = new HateoasInterface(getMockAngularResponseData(null, embeddedKey));
+
+			expect(typeof response.resource).toBe("function");
+
+			expect(typeof response[embeddedKey].resource).toBe("function");
+
+			expect(response[embeddedKey].resource("self")).toBeTruthy();
+			expect(typeof response[embeddedKey].resource("self").get).toBe("function");
+
+			expect(response[embeddedKey].resource("other")).toBeTruthy();
+			expect(typeof response[embeddedKey].resource("other").get).toBe("function");
+
+			expect(response[embeddedKey].resource).toThrow();
+			expect(function () {
+				response[embeddedKey].resource("invalid link");
 			}).toThrow();
 
 		});
@@ -130,6 +195,29 @@ describe("Hateoas Interface module", function () {
 
 			}
 
+		});
+
+		it("should allow customization of embedded key", function () {
+
+			var embeddedKey;
+
+			for (var i = 0; i < 10; i++) {
+
+				embeddedKey = Math.random().toString(36).slice(-10);
+
+				HateoasInterfaceProvider.setHalEmbedded(embeddedKey);
+
+				var response = new HateoasInterface(getMockAngularResponseData(null, embeddedKey));
+				expect(response instanceof HateoasInterface).toBe(true);
+				expect(response[embeddedKey] instanceof HateoasInterface).toBe(true);
+
+				expect(response[embeddedKey].resource("self")).toBeTruthy();
+				expect(typeof response[embeddedKey].resource("self").get).toBe("function");
+
+				expect(response[embeddedKey].resource("other")).toBeTruthy();
+				expect(typeof response[embeddedKey].resource("other").get).toBe("function");
+
+			}
 		});
 
 	});
