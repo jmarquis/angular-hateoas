@@ -106,8 +106,12 @@ angular.module("hateoas", ["ngResource"])
 				var arrayToObject = function (keyItem, valueItem, array) {
 					var obj = {};
 					angular.forEach(array, function (item, index) {
-						if ((item[keyItem] || index) && item[valueItem]) {
-							obj[item[keyItem] || index] = item[valueItem];
+						if ((item[keyItem] || index)) {
+							if (item[valueItem]) {
+								obj[item[keyItem] || index] = item[valueItem];
+							} else {
+								obj[item[keyItem] || index] = item
+							}
 						}
 					});
 
@@ -131,16 +135,16 @@ angular.module("hateoas", ["ngResource"])
 						data = angular.extend(this, data, links, { resource: resource });
 					}
 
-					if (halEmbedded && data[halEmbedded]) {
-						data = angular.extend(this, data, new HateoasInterface(data[halEmbedded]));
-					}
-
 					// recursively consume all contained arrays or objects with links
 					angular.forEach(data, function (value, key) {
 						if (key !== linksKey && angular.isObject(value) && (angular.isArray(value) || value[linksKey])) {
 							data[key] = new HateoasInterface(value);
 						}
 					});
+
+					if (halEmbedded && data[halEmbedded]) {
+						data = angular.extend(this, data, new HateoasInterface(data[halEmbedded]));
+					}
 
 					return data;
 
