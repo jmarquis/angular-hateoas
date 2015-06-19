@@ -106,8 +106,12 @@ angular.module("hateoas", ["ngResource"])
 				var arrayToObject = function (keyItem, valueItem, array) {
 					var obj = {};
 					angular.forEach(array, function (item, index) {
-						if ((item[keyItem] || index) && item[valueItem]) {
-							obj[item[keyItem] || index] = item[valueItem];
+						if ((item[keyItem] || index)) {
+							if (item[valueItem]) {
+								obj[item[keyItem] || index] = item[valueItem];
+							} else {
+								obj[item[keyItem] || index] = item
+							}
 						}
 					});
 
