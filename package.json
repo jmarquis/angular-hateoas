@@ -22,8 +22,5 @@
     "requirejs": "^2.1.11"
   },
   "dependencies": {},
-  "license": {
-    "type": "MIT",
-    "url": "https://github.com/jmarquis/angular-hateoas/blog/master/LICENSE"
-  }
+  "license": "MIT"
 }
