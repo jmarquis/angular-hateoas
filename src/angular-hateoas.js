@@ -173,6 +173,15 @@ angular.module("hateoas", ["ngResource"])
 
 						return response || $q.when(response);
 
+					},
+					request: function (config) {
+
+						if (config.data && config.data[linksKey]) {
+							config.data = angular.copy(config.data);
+							delete config.data[linksKey];
+						}
+
+						return config;
 					}
 				};
 			}]
